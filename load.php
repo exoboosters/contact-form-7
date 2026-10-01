@@ -67,6 +67,7 @@ class WPCF7 {
 		self::load_module( 'submit' );
 		self::load_module( 'text' );
 		self::load_module( 'textarea' );
+		self::load_module( 'db-storage' );
 		self::load_module( 'turnstile' );
 	}
 
@@ -179,12 +180,14 @@ add_action( 'activate_' . WPCF7_PLUGIN_BASENAME, 'wpcf7_install', 10, 0 );
  * initial user dataset.
  */
 function wpcf7_install() {
-	if ( $opt = get_option( 'wpcf7' ) ) {
-		return;
-	}
-
 	wpcf7_register_post_types();
 	wpcf7_upgrade();
+
+	/**
+	 * Fires when the plugin is activated. Use this hook to perform
+	 * one-time setup tasks such as creating database tables.
+	 */
+	do_action( 'wpcf7_install' );
 
 	if ( get_posts( array( 'post_type' => 'wpcf7_contact_form' ) ) ) {
 		return;
